@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="maven-antrun-" default="main">
+  <target name="main">
+    <copy todir="/Users/oksana/Documents/GitHub/sunflower/target/classes/static">
+      <fileset dir="/Users/oksana/Documents/GitHub/sunflower/client/build" />
+    </copy>
+  </target>
+</project>

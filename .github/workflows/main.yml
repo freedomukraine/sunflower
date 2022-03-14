@@ -1,0 +1,70 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    env:
+      HASH: $(git rev-parse --short "$GITHUB_SHA")
+      BRANCH: ${GITHUB_REF##*/}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 16
+        uses: actions/setup-java@v2
+        with:
+          java-version: '16'
+          distribution: 'adopt'
+          cache: maven
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots verify
+#
+#      - id: "auth"
+#        uses: "google-github-actions/auth@v0"
+#        with:
+#          project_id: ${{ secrets.GCP_PROJECT_ID }}
+#          credentials_json: ${{ secrets.GCP_SA_KEY }}
+#
+#      - name: 'Set up Cloud SDK'
+#        uses: 'google-github-actions/setup-gcloud@v0'
+#
+#      - name: Use gcloud CLI
+#        run: gcloud info
+#
+#        # Build docker image
+#      - name: Image
+#        run: |-
+#          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_SERVICE_NAME }}:$GITHUB_SHA .
+#      # Configure docker to use the gcloud command-line tool as a credential helper
+#      - run: |
+#          gcloud auth configure-docker -q
+#
+#      # Push image to Google Container Registry
+#      - name: Build
+#        run: |-
+#          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_SERVICE_NAME }}:$GITHUB_SHA
+#
+#      # Deploy to CloudRun
+#      - name: Deploy to CloudRun
+#        run: |-
+#          gcloud run deploy ${{ secrets.GCP_SERVICE_NAME }} \
+#            --quiet \
+#            --image "gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_SERVICE_NAME }}:$GITHUB_SHA" \
+#            --platform "managed" \
+#            --region "northamerica-northeast2" \
+#            --memory=512Mi
